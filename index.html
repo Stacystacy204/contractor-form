@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agreement Organization Meeting — Sign-In Form</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", sans-serif;
+  background: linear-gradient(160deg, #232F3E 0%, #2D2D2D 55%, #232F3E 100%);
+  min-height: 100vh; color: #F2F2F2;
+  display: flex; flex-direction: column; align-items: center; padding-bottom: 80px;
+}
+/* Header */
+.hdr { width: 100%; background: rgba(35,47,62,.97); border-bottom: 2.5px solid #FF9900; padding: 13px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 200; }
+.hdr-icon { font-size: 22px; }
+.hdr-text { flex: 1; }
+.hdr-site { font-size: 10px; color: #FF9900; letter-spacing: .6px; text-transform: uppercase; }
+.hdr-title { font-size: 15px; font-weight: 700; margin-top: 1px; }
+.hdr-badge { font-size: 10px; color: #e07070; border: 1px solid rgba(220,80,80,.4); border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
+/* Title */
+.pg-title { text-align: center; margin: 22px 20px 0; }
+.pg-title h1 { font-size: 22px; font-weight: 800; }
+.pg-title .sub { font-size: 13px; color: #aab4be; margin-top: 4px; }
+.pg-badge { display: inline-block; margin-top: 8px; background: rgba(255,153,0,.12); border: 1px solid rgba(255,153,0,.4); border-radius: 8px; padding: 4px 12px; font-size: 11px; color: #FF9900; }
+/* Cards */
+.card { background: rgba(55,71,90,.5); border: 1px solid rgba(255,153,0,.25); border-radius: 16px; padding: 20px; margin: 14px 20px 0; width: calc(100% - 40px); max-width: 640px; }
+.sec-lbl { font-size: 11px; color: #FF9900; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,153,0,.15); padding-bottom: 5px; }
+.frow { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.fg { flex: 1; min-width: 190px; }
+.fg label { display: block; font-size: 12px; color: #aab4be; margin-bottom: 5px; font-weight: 600; }
+.fg input, .fg select, .fg textarea { width: 100%; padding: 10px 13px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.15); background: rgba(35,47,62,.7); color: #F2F2F2; font-size: 14px; outline: none; font-family: inherit; transition: border .2s; }
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #FF9900; }
+.fg input::placeholder, .fg textarea::placeholder { color: #6a8898; }
+.fg select option { background: #2D2D2D; }
+.fg textarea { resize: vertical; min-height: 65px; }
+.req { color: #e07070; }
+/* Participant table */
+.pt-hdr { display: grid; grid-template-columns: 28px 1fr 1fr 96px 36px; gap: 8px; margin-bottom: 6px; }
+.pt-hdr span { font-size: 11px; color: #aab4be; text-align: center; font-weight: 700; text-transform: uppercase; }
+.pt-row { display: grid; grid-template-columns: 28px 1fr 1fr 96px 36px; gap: 8px; align-items: center; margin-bottom: 8px; }
+.pt-num { width: 28px; height: 36px; border-radius: 7px; background: rgba(255,153,0,.15); color: #FF9900; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.pt-row input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,.12); background: rgba(35,47,62,.7); color: #F2F2F2; font-size: 13px; outline: none; font-family: inherit; }
+.pt-row input:focus { border-color: #FF9900; }
+.pt-row input::placeholder { color: #6a8898; }
+.btn-sign { width: 96px; height: 36px; border-radius: 8px; border: 1.5px dashed rgba(255,153,0,.6); background: rgba(255,153,0,.08); color: #FF9900; font-size: 12px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background .2s; }
+.btn-sign:hover { background: rgba(255,153,0,.18); }
+.btn-sign.signed { border-style: solid; background: rgba(255,153,0,.15); }
+.sig-thumb { width: 96px; height: 36px; border-radius: 8px; border: 1.5px solid rgba(255,153,0,.5); background: #fff; object-fit: contain; display: block; cursor: pointer; }
+.btn-del { width: 36px; height: 36px; border-radius: 7px; background: rgba(220,60,60,.1); border: 1px solid rgba(220,60,60,.3); color: #e07070; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-add-row { width: 100%; padding: 10px; border-radius: 10px; margin-top: 6px; border: 1.5px dashed rgba(255,153,0,.4); background: transparent; color: #FF9900; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 600; }
+.btn-add-row:hover { background: rgba(255,153,0,.06); }
+.note-box { background: rgba(35,47,62,.5); border-left: 3px solid #FF9900; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 12px; color: #aab4be; line-height: 1.6; margin-top: 10px; }
+/* Action buttons */
+.btn-out { width: calc(100% - 40px); max-width: 640px; margin: 10px 20px 0; padding: 13px; border-radius: 13px; border: 1px solid rgba(255,153,0,.4); background: transparent; color: #FF9900; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+/* Signature modal */
+#sig-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.82); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+#sig-modal.open { display: flex; }
+#sig-box { background: #1e2d3e; border: 2px solid #FF9900; border-radius: 18px; padding: 22px; width: 100%; max-width: 480px; }
+#sig-box h3 { color: #FF9900; font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+#sig-for-name { font-size: 12px; color: #aab4be; margin-bottom: 14px; }
+.sig-wrapper { position: relative; border-radius: 12px; border: 2px solid rgba(255,153,0,.4); background: #fff; overflow: hidden; touch-action: none; }
+.sig-wrapper.active-border { border-color: #FF9900; box-shadow: 0 0 0 3px rgba(255,153,0,.2); }
+#sig-canvas { display: block; width: 100%; cursor: crosshair; }
+.sig-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #bbb; font-size: 13px; pointer-events: none; text-align: center; }
+.sig-hint { font-size: 11px; color: #6a8898; text-align: center; margin-top: 6px; }
+.sig-btns { display: flex; gap: 10px; margin-top: 14px; }
+.sig-btns button { flex: 1; padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+#btn-sig-cancel { background: transparent; border: 1px solid rgba(220,60,60,.4); color: #e07070; }
+#btn-sig-clear { background: rgba(55,71,90,.6); border: 1px solid rgba(255,255,255,.18); color: #aab4be; }
+#btn-sig-confirm { background: linear-gradient(135deg,#FF9900,#e68200); border: none; color: #111; }
+/* Success */
+#success { display: none; flex-direction: column; align-items: center; width: 100%; }
+.suc-card { background: rgba(55,71,90,.6); border: 1px solid rgba(255,153,0,.3); border-radius: 16px; padding: 28px 20px; margin: 20px 20px 0; width: calc(100% - 40px); max-width: 640px; text-align: center; }
+.suc-icon { font-size: 52px; margin-bottom: 10px; }
+.suc-ttl { font-size: 21px; font-weight: 900; color: #FF9900; }
+.suc-tbl { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; text-align: left; }
+.suc-tbl th { background: rgba(255,153,0,.12); color: #FF9900; padding: 8px 10px; border-bottom: 1px solid rgba(255,153,0,.2); }
+.suc-tbl td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,.06); color: #F2F2F2; }
+.suc-tbl tr:last-child td { border-bottom: none; }
+@media print {
+  body { background: #fff; color: #000; }
+  .hdr { background: #232F3E !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #sig-modal, .btn-out, .btn-add-row, .btn-del, .btn-sign { display: none !important; }
+  .card { background: #fff !important; border: 1px solid #ccc !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Signature Modal -->
+<div id="sig-modal">
+  <div id="sig-box">
+    <h3>✍️ Signature Pad | 請簽名</h3>
+    <div id="sig-for-name">Signing for: —</div>
+    <div class="sig-wrapper" id="sig-wrapper">
+      <canvas id="sig-canvas"></canvas>
+      <div class="sig-placeholder" id="sig-placeholder">✍️ Sign here · 請在此簽名</div>
+    </div>
+    <div class="sig-hint">Draw with mouse or finger · 請用滑鼠或手指簽名</div>
+    <div class="sig-btns">
+      <button id="btn-sig-cancel">✕ Cancel</button>
+      <button id="btn-sig-clear">↺ Clear 清除</button>
+      <button id="btn-sig-confirm">✓ Confirm 確認</button>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-icon">🏗️</div>
+  <div class="hdr-text">
+    <div class="hdr-site">Amazon Development Center Taiwan · Health &amp; Safety</div>
+    <div class="hdr-title">Contractor Management</div>
+  </div>
+  <div class="hdr-badge">Amazon Confidential</div>
+</div>
+
+<!-- Title -->
+<div class="pg-title">
+  <h1>📋 Agreement Organization Meeting</h1>
+  <div class="sub">承攬作業協議組織會議簽到單</div>
+  <span class="pg-badge">附表四 · Appendix 4</span>
+</div>
+
+<!-- Form -->
+<div id="form-screen" style="display:flex;flex-direction:column;align-items:center;width:100%">
+  <div class="card">
+    <div class="sec-lbl">📅 Meeting Information 會議基本資料</div>
+    <div class="frow">
+      <div class="fg"><label>Meeting Date 日期 <span class="req">*</span></label><input type="date" id="f-date"/></div>
+      <div class="fg"><label>Site 地點 <span class="req">*</span></label>
+        <select id="f-site"><option value="">-- Select --</option><option>TPE12</option><option>TPE16 eero</option><option>HSZ1</option><option>Other</option></select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Project Name 工程項目 <span class="req">*</span></label><input type="text" id="f-project" placeholder="e.g. TPE12 Office Renovation"/></div>
+      <div class="fg"><label>Contractor Company 承攬商 <span class="req">*</span></label><input type="text" id="f-contractor" placeholder="Company name"/></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Amazon POC 業主聯絡人</label><input type="text" id="f-poc" placeholder="Name, Department"/></div>
+      <div class="fg"><label>EHS Representative 職業安全衛生人員</label><input type="text" id="f-ehs" value="James Lee (ijamlee)"/></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Work Period 施工期間</label><input type="text" id="f-period" placeholder="e.g. 2026-07-18 to 2026-07-31"/></div>
+      <div class="fg"><label>Meeting Type 會議類型</label>
+        <select id="f-type">
+          <option value="pre-work">Pre-Work Agreement Meeting 開工前協議</option>
+          <option value="annual">Annual Safety Meeting 年度安全會議</option>
+          <option value="adhoc">Other / New Hazard 其他/新危害</option>
+        </select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Summary / Key Safety Points 會議重點摘要</label><textarea id="f-summary" placeholder="Key topics discussed, hazards identified..."></textarea></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-lbl">✍️ Participant Sign-In 出席人員簽到</div>
+    <div class="pt-hdr">
+      <span></span><span>Name 姓名</span><span>Dept / Company</span><span>Signature 簽名</span><span></span>
+    </div>
+    <div id="pt-list"></div>
+    <button class="btn-add-row" id="btn-add">＋ Add Participant 新增出席人員</button>
+    <div class="note-box">
+      本名冊簽核完成後，請送交請購（承辦）單位留存，另影本 1 份予職業安全衛生部門留存。<br/>
+      After completion, submit original to contracting unit and one copy to EHS (Taiwan OSHA — 3-year retention).
+    </div>
+  </div>
+
+  <button class="btn-out" id="btn-submit">✅ Submit &amp; Save 提交並儲存</button>
+  <button class="btn-out" id="btn-print">🖨️ Print / Export PDF 列印</button>
+  <button class="btn-out" id="btn-preview" style="border-color:rgba(100,180,255,.45);color:#7ec8f8;">🔍 Preview in New Window 在新視窗預覽</button>
+</div>
+
+<!-- Success -->
+<div id="success">
+  <div class="suc-card">
+    <div class="suc-icon">✅</div>
+    <div class="suc-ttl">Meeting Record Saved 協議組織會議紀錄已儲存</div>
+    <table class="suc-tbl" id="suc-tbl"></table>
+  </div>
+  <button class="btn-out" id="btn-print2">🖨️ Print / Export PDF</button>
+  <button class="btn-out" id="btn-reset">＋ New Meeting Record 新增紀錄</button>
+</div>
+
+<script>
+var rowCount = 0;
+var sigData  = {};  // rowId → base64 or null
+var activeRow = null;
+
+/* ── Signature modal setup (H&S Gift Pickup proven method) ── */
+var sigCanvas  = document.getElementById('sig-canvas');
+var sigCtx     = sigCanvas.getContext('2d');
+var sigWrapper = document.getElementById('sig-wrapper');
+var sigPh      = document.getElementById('sig-placeholder');
+var isDrawing  = false;
+var lastX = 0, lastY = 0;
+
+function resizeSigCanvas() {
+  var ratio = window.devicePixelRatio || 1;
+  var w = sigWrapper.clientWidth;
+  sigCanvas.width  = w * ratio;
+  sigCanvas.height = 160 * ratio;
+  sigCanvas.style.width  = w + 'px';
+  sigCanvas.style.height = '160px';
+  sigCtx.scale(ratio, ratio);
+  sigCtx.strokeStyle = '#232F3E';
+  sigCtx.lineWidth   = 2.5;
+  sigCtx.lineCap     = 'round';
+  sigCtx.lineJoin    = 'round';
+}
+
+function getSigPos(e) {
+  var r = sigCanvas.getBoundingClientRect();
+  return e.touches
+    ? { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }
+    : { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+function sigStart(e) {
+  e.preventDefault(); isDrawing = true;
+  var p = getSigPos(e); lastX = p.x; lastY = p.y;
+  sigWrapper.classList.add('active-border');
+}
+
+function sigDraw(e) {
+  if (!isDrawing) return; e.preventDefault();
+  var p = getSigPos(e);
+  sigCtx.beginPath(); sigCtx.moveTo(lastX, lastY); sigCtx.lineTo(p.x, p.y); sigCtx.stroke();
+  lastX = p.x; lastY = p.y;
+  sigPh.style.display = 'none';
+}
+
+function sigEnd(e) { if (isDrawing) { e.preventDefault(); isDrawing = false; } }
+
+sigCanvas.addEventListener('mousedown',  sigStart);
+sigCanvas.addEventListener('mousemove',  sigDraw);
+sigCanvas.addEventListener('mouseup',    sigEnd);
+sigCanvas.addEventListener('mouseleave', sigEnd);
+sigCanvas.addEventListener('touchstart', sigStart, { passive: false });
+sigCanvas.addEventListener('touchmove',  sigDraw,  { passive: false });
+sigCanvas.addEventListener('touchend',   sigEnd,   { passive: false });
+
+function isSigBlank() {
+  return !new Uint32Array(sigCtx.getImageData(0, 0, sigCanvas.width, sigCanvas.height).data.buffer).some(function(c) { return c !== 0; });
+}
+
+function clearSigPad() {
+  var ratio = window.devicePixelRatio || 1;
+  sigCtx.clearRect(0, 0, sigCanvas.width / ratio, sigCanvas.height / ratio);
+  sigPh.style.display = 'block';
+  sigWrapper.classList.remove('active-border');
+}
+
+/* ── Open / Close modal ── */
+function openSigModal(rowId) {
+  activeRow = rowId;
+  var nameEl = document.getElementById('pt-name-' + rowId);
+  var name = nameEl ? nameEl.value.trim() : '';
+  document.getElementById('sig-for-name').textContent = 'Signing for: ' + (name || '(name not entered)');
+  document.getElementById('sig-modal').classList.add('open');
+  clearSigPad();
+  resizeSigCanvas();
+  // If already signed, show previous signature
+  if (sigData[rowId]) {
+    var img = new Image();
+    img.onload = function() {
+      var ratio = window.devicePixelRatio || 1;
+      sigCtx.drawImage(img, 0, 0, sigCanvas.width / ratio, sigCanvas.height / ratio);
+      sigPh.style.display = 'none';
+    };
+    img.src = sigData[rowId];
+  }
+}
+
+function closeSigModal() {
+  document.getElementById('sig-modal').classList.remove('open');
+  activeRow = null;
+}
+
+document.getElementById('btn-sig-cancel').addEventListener('click', closeSigModal);
+
+document.getElementById('btn-sig-clear').addEventListener('click', clearSigPad);
+
+document.getElementById('btn-sig-confirm').addEventListener('click', function() {
+  if (!activeRow) return;
+  if (isSigBlank()) { alert('Please sign before confirming.\n請先簽名再確認。'); return; }
+  var dataUrl = sigCanvas.toDataURL('image/png');
+  sigData[activeRow] = dataUrl;
+  // Show thumbnail
+  var cell = document.getElementById('sig-cell-' + activeRow);
+  cell.innerHTML = '<img class="sig-thumb" src="' + dataUrl + '" title="Click to re-sign" data-sign="' + activeRow + '">';
+  // Update sign button state
+  var btn = document.getElementById('sig-btn-' + activeRow);
+  if (btn) { btn.classList.add('signed'); btn.textContent = '✅ Signed'; }
+  closeSigModal();
+});
+
+window.addEventListener('resize', resizeSigCanvas);
+
+/* ── Participant rows ── */
+function addRow() {
+  rowCount++;
+  var id = rowCount;
+  var list = document.getElementById('pt-list');
+  var div = document.createElement('div');
+  div.className = 'pt-row';
+  div.id = 'pt-row-' + id;
+  div.innerHTML =
+    '<div class="pt-num">' + id + '</div>' +
+    '<input type="text" id="pt-name-' + id + '" placeholder="Full Name 姓名">' +
+    '<input type="text" id="pt-dept-' + id + '" placeholder="Dept / Company">' +
+    '<div id="sig-cell-' + id + '">' +
+      '<button class="btn-sign" id="sig-btn-' + id + '" data-sign="' + id + '">✍️ Sign</button>' +
+    '</div>' +
+    '<button class="btn-del" data-del="' + id + '">✕</button>';
+  list.appendChild(div);
+  sigData[id] = null;
+}
+
+/* ── Event delegation for rows ── */
+document.getElementById('pt-list').addEventListener('click', function(e) {
+  var signBtn = e.target.closest('[data-sign]');
+  var delBtn  = e.target.closest('[data-del]');
+  if (signBtn) openSigModal(parseInt(signBtn.getAttribute('data-sign')));
+  if (delBtn) {
+    var id = parseInt(delBtn.getAttribute('data-del'));
+    var el = document.getElementById('pt-row-' + id);
+    if (el) el.remove();
+    delete sigData[id];
+    document.querySelectorAll('#pt-list .pt-row').forEach(function(r, i) {
+      var n = r.querySelector('.pt-num'); if (n) n.textContent = i + 1;
+    });
+  }
+});
+
+document.getElementById('btn-add').addEventListener('click', addRow);
+document.getElementById('btn-print').addEventListener('click', function() { window.print(); });
+document.getElementById('btn-print2').addEventListener('click', function() { window.print(); });
+document.getElementById('btn-preview').addEventListener('click', function() {
+  // Write current page HTML to a new file via download, then open it
+  var html = document.documentElement.outerHTML;
+  var blob = new Blob([html], { type: 'text/html' });
+  var url  = URL.createObjectURL(blob);
+  // Open the blob URL directly — works in Chrome when file is served via http://
+  var win = window.open(url, '_blank', 'width=860,height=960,scrollbars=yes,resizable=yes');
+  if (!win) {
+    // Fallback: trigger download so they can open manually
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'Contractor_Agreement_Meeting_Preview.html';
+    a.click();
+    alert('Preview saved as a download. Open the downloaded file in Chrome.\n預覽已儲存為下載檔案，請用 Chrome 開啟。');
+  }
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+});
+document.getElementById('btn-reset').addEventListener('click', resetForm);
+
+/* ── Submit ── */
+document.getElementById('btn-submit').addEventListener('click', function() {
+  var date = document.getElementById('f-date').value;
+  var site = document.getElementById('f-site').value;
+  var proj = document.getElementById('f-project').value.trim();
+  var cont = document.getElementById('f-contractor').value.trim();
+  if (!date || !site || !proj || !cont) { alert('Please fill in all required fields.\n請填寫所有必填欄位。'); return; }
+  var parts = [];
+  document.querySelectorAll('#pt-list .pt-row').forEach(function(row) {
+    var rid = parseInt(row.id.replace('pt-row-', ''));
+    var name = document.getElementById('pt-name-' + rid).value.trim();
+    var dept = document.getElementById('pt-dept-' + rid).value.trim();
+    if (name) parts.push({ name: name, dept: dept, signed: !!sigData[rid], sig: sigData[rid] || null });
+  });
+  if (parts.length === 0) { alert('Please add at least one participant.\n請至少新增一位出席人員。'); return; }
+  var tm = { 'pre-work': 'Pre-Work Agreement Meeting', 'annual': 'Annual Safety Meeting', 'adhoc': 'Other / New Hazard' };
+  var rec = {
+    date: date, site: site, project: proj, contractor: cont,
+    poc: document.getElementById('f-poc').value.trim(),
+    ehs: document.getElementById('f-ehs').value.trim(),
+    period: document.getElementById('f-period').value.trim(),
+    type: document.getElementById('f-type').value,
+    participants: parts, saved: new Date().toLocaleString('en-CA')
+  };
+  try { var s = JSON.parse(localStorage.getItem('cm_mtgs') || '[]'); s.push(rec); localStorage.setItem('cm_mtgs', JSON.stringify(s)); } catch(e) {}
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('success').style.display = 'flex';
+  var signed = parts.filter(function(p) { return p.signed; }).length;
+  document.getElementById('suc-tbl').innerHTML =
+    '<tr><th colspan="2">Meeting Summary 會議摘要</th></tr>' +
+    '<tr><td>Date</td><td>' + rec.date + '</td></tr>' +
+    '<tr><td>Site</td><td>' + rec.site + '</td></tr>' +
+    '<tr><td>Project</td><td>' + rec.project + '</td></tr>' +
+    '<tr><td>Contractor</td><td>' + rec.contractor + '</td></tr>' +
+    '<tr><td>Meeting Type</td><td>' + (tm[rec.type] || rec.type) + '</td></tr>' +
+    '<tr><td>Participants</td><td>' + parts.length + ' (' + signed + ' signed ✍️)</td></tr>' +
+    '<tr><td>Saved At</td><td>' + rec.saved + '</td></tr>';
+});
+
+/* ── Reset ── */
+function resetForm() {
+  document.getElementById('success').style.display = 'none';
+  document.getElementById('form-screen').style.display = 'flex';
+  document.getElementById('pt-list').innerHTML = '';
+  rowCount = 0; sigData = {};
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  ['f-project','f-contractor','f-summary','f-period'].forEach(function(i) { document.getElementById(i).value = ''; });
+  document.getElementById('f-site').value = '';
+  document.getElementById('f-type').value = 'pre-work';
+  addRow(); addRow(); addRow(); addRow();
+}
+
+/* ── Init ── */
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+addRow(); addRow(); addRow(); addRow();
+</script>
+</body>
+</html>
